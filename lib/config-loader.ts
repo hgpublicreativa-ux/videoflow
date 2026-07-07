@@ -2,6 +2,19 @@ import { Project } from './types';
 import path from 'path';
 import fs from 'fs';
 
+// Proyecto fijo. Siempre presente, no depende de env var ni archivo.
+const FIXED_PROJECTS: Project[] = [
+  {
+    nombre: 'zonal gol',
+    activo: true,
+    driveAccount: 'account1',
+    inputFolderId: '1EzFB_ObyombPBbgsMdIRnnQqxk4yincI',
+    finalFolderId: '1mdpCoJ78f6lwSSweE2FuBDXEZBl9dUue',
+    reviewFolderId: '1hmA1n4JJALfPjKYf3hXI19pNLJB6Ro9c',
+    errorFolderId: '1IbhiH2ezi6dqVbA9pw4KgMwZK7TmfLG5',
+  },
+];
+
 export class ConfigLoader {
   private configPath: string;
 
@@ -10,31 +23,40 @@ export class ConfigLoader {
   }
 
   loadProjects(): Project[] {
-    // Prioridad: env var PROJECTS_JSON (persiste en Railway). Fallback: archivo.
+    // Proyectos fijos (hardcoded) + extras de env var / archivo, sin duplicar.
+    const projects: Project[] = [...FIXED_PROJECTS];
+    const names = new Set(projects.map(p => p.nombre));
+
+    const merge = (extra: Project[]) => {
+      for (const p of extra) {
+        if (!names.has(p.nombre)) {
+          projects.push(p);
+          names.add(p.nombre);
+        }
+      }
+    };
+
     const envJson = process.env.PROJECTS_JSON;
     if (envJson) {
       try {
-        const projects = JSON.parse(envJson);
-        return Array.isArray(projects) ? projects : [projects];
+        const parsed = JSON.parse(envJson);
+        merge(Array.isArray(parsed) ? parsed : [parsed]);
       } catch (error) {
         console.error('Error parsing PROJECTS_JSON env var:', error);
       }
     }
 
     try {
-      if (!fs.existsSync(this.configPath)) {
-        console.warn(`Config file not found at ${this.configPath}`);
-        return [];
+      if (fs.existsSync(this.configPath)) {
+        const data = fs.readFileSync(this.configPath, 'utf-8');
+        const parsed = JSON.parse(data);
+        merge(Array.isArray(parsed) ? parsed : [parsed]);
       }
-
-      const data = fs.readFileSync(this.configPath, 'utf-8');
-      const projects = JSON.parse(data);
-
-      return Array.isArray(projects) ? projects : [projects];
     } catch (error) {
-      console.error('Error loading config:', error);
-      return [];
+      console.error('Error loading config file:', error);
     }
+
+    return projects;
   }
 
   getActiveProjects(): Project[] {
