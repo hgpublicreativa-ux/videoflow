@@ -32,7 +32,7 @@ export default async function handler(
     res.status(200).json({
       success: true,
       message: 'Authentication successful',
-      refreshToken: tokens.refresh_token,
+      refreshToken: tokens.refresh_token || undefined,
     });
   } catch (error) {
     console.error('Auth error:', error);

@@ -45,7 +45,10 @@ export class GoogleDriveService {
         pageSize: 100,
       });
 
-      return response.data.files || [];
+      return (response.data.files || [])
+        .filter((f): f is { id: string; name: string; mimeType: string } =>
+          !!f.id && !!f.name && !!f.mimeType
+        );
     } catch (error) {
       console.error('Error listing videos:', error);
       throw error;
