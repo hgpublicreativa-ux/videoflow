@@ -1,0 +1,20 @@
+[
+  {
+    "nombre": "Farándula Ecuador",
+    "activo": true,
+    "driveAccount": "account1",
+    "inputFolderId": "YOUR_INPUT_FOLDER_ID_1",
+    "finalFolderId": "YOUR_FINAL_FOLDER_ID_1",
+    "reviewFolderId": "YOUR_REVIEW_FOLDER_ID_1",
+    "errorFolderId": "YOUR_ERROR_FOLDER_ID_1"
+  },
+  {
+    "nombre": "Fútbol",
+    "activo": false,
+    "driveAccount": "account2",
+    "inputFolderId": "YOUR_INPUT_FOLDER_ID_2",
+    "finalFolderId": "YOUR_FINAL_FOLDER_ID_2",
+    "reviewFolderId": "YOUR_REVIEW_FOLDER_ID_2",
+    "errorFolderId": "YOUR_ERROR_FOLDER_ID_2"
+  }
+]
