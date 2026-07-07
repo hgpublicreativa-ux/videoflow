@@ -1,0 +1,31 @@
+name: Scheduled Video Processing
+
+# Corre 2x/dia (hora Ecuador UTC-5) + manual desde GitHub.
+# Despierta Railway (App Sleeping), procesa, vuelve a dormir.
+on:
+  schedule:
+    # 10:00 Ecuador = 15:00 UTC
+    - cron: '0 15 * * *'
+    # 20:00 Ecuador = 01:00 UTC
+    - cron: '0 1 * * *'
+  workflow_dispatch: {} # boton manual en GitHub Actions
+
+jobs:
+  process:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Call VideoFlow cron endpoint
+        run: |
+          echo "Disparando procesamiento en VideoFlow..."
+          RESPONSE=$(curl -sS -w "\n%{http_code}" -X POST \
+            "https://web-production-6fc3d.up.railway.app/api/cron" \
+            -H "x-cron-secret: ${{ secrets.CRON_SECRET }}" \
+            --max-time 600)
+          BODY=$(echo "$RESPONSE" | head -n -1)
+          CODE=$(echo "$RESPONSE" | tail -n 1)
+          echo "HTTP $CODE"
+          echo "$BODY"
+          if [ "$CODE" -ne 200 ]; then
+            echo "::error::Procesamiento fallo con HTTP $CODE"
+            exit 1
+          fi
