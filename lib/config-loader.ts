@@ -2,7 +2,7 @@ import { Project } from './types';
 import path from 'path';
 import fs from 'fs';
 
-// Proyecto fijo. Siempre presente, no depende de env var ni archivo.
+// Proyectos fijos. Siempre presentes, no dependen de env var ni archivo.
 const FIXED_PROJECTS: Project[] = [
   {
     nombre: 'zonal gol',
@@ -12,6 +12,24 @@ const FIXED_PROJECTS: Project[] = [
     finalFolderId: '1mdpCoJ78f6lwSSweE2FuBDXEZBl9dUue',
     reviewFolderId: '1hmA1n4JJALfPjKYf3hXI19pNLJB6Ro9c',
     errorFolderId: '1IbhiH2ezi6dqVbA9pw4KgMwZK7TmfLG5',
+  },
+  {
+    nombre: 'tvec',
+    activo: true,
+    driveAccount: 'account1',
+    inputFolderId: '1H-lbuKxZ-OGXdpAVrNMVFJTW8PYq3-NS',
+    finalFolderId: '1bS10pVFvvxai-gbE14oMAI4qboSmie2-',
+    reviewFolderId: '1jbNe7Uj5BahAiosQtN-kWqjSZXYIq-2V',
+    errorFolderId: '1qmSrIkT51Xw1U_Do8cqe02C61rjjU638',
+  },
+  {
+    nombre: 'famosos reales',
+    activo: true,
+    driveAccount: 'account1',
+    inputFolderId: '1SZjx-NatnNzehGESzwLI0SaEI1AMxRnQ',
+    finalFolderId: '1Uk_FJ3xqpar2kgUQWDZWYZFIFazcWMrV',
+    reviewFolderId: '1teE_axtpFujvLU7UBjJ9kPl1G5ixQrkw',
+    errorFolderId: '1sGknrr5WFn4AxJRtS5mFXxfjDCzDq9KU',
   },
 ];
 
