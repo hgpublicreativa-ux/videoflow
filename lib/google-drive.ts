@@ -121,6 +121,60 @@ export class GoogleDriveService {
     }
   }
 
+  async listAudioInFolder(folderId: string): Promise<DriveFile[]> {
+    try {
+      const response = await drive.files.list({
+        auth: this.auth,
+        q: `'${folderId}' in parents and mimeType contains 'audio/' and trashed=false`,
+        spaces: 'drive',
+        fields: 'files(id, name, mimeType)',
+        pageSize: 200,
+      });
+
+      return (response.data.files || [])
+        .filter((f): f is { id: string; name: string; mimeType: string } =>
+          !!f.id && !!f.name && !!f.mimeType
+        );
+    } catch (error) {
+      console.error('Error listing audio:', error);
+      throw error;
+    }
+  }
+
+  async uploadFile(
+    filePath: string,
+    name: string,
+    parentId: string,
+    mimeType = 'video/mp4'
+  ): Promise<string> {
+    try {
+      const fs = await import('fs');
+      const res = await drive.files.create({
+        auth: this.auth,
+        requestBody: { name, parents: [parentId] },
+        media: { mimeType, body: fs.createReadStream(filePath) },
+        fields: 'id',
+      });
+      return res.data.id as string;
+    } catch (error) {
+      console.error('Error uploading file:', error);
+      throw error;
+    }
+  }
+
+  async trashFile(fileId: string): Promise<void> {
+    try {
+      await drive.files.update({
+        auth: this.auth,
+        fileId,
+        requestBody: { trashed: true },
+      });
+    } catch (error) {
+      console.error('Error trashing file:', error);
+      throw error;
+    }
+  }
+
   sanitizeFileName(fileName: string): string {
     return fileName
       .replace(/[<>:"|?*\x00-\x1f]/g, '')

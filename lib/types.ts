@@ -6,6 +6,8 @@ export interface Project {
   finalFolderId: string;
   reviewFolderId: string;
   errorFolderId: string;
+  // Opcional: carpeta con canciones. Si existe, mezcla musica de fondo aleatoria.
+  musicFolderId?: string;
 }
 
 export interface ProcessingResult {

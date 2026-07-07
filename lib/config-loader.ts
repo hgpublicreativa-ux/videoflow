@@ -12,6 +12,7 @@ const FIXED_PROJECTS: Project[] = [
     finalFolderId: '1mdpCoJ78f6lwSSweE2FuBDXEZBl9dUue',
     reviewFolderId: '1hmA1n4JJALfPjKYf3hXI19pNLJB6Ro9c',
     errorFolderId: '1IbhiH2ezi6dqVbA9pw4KgMwZK7TmfLG5',
+    musicFolderId: '1HR98Xb6P-R0OI1xhsDd5gLUY6p8CdglT',
   },
   {
     nombre: 'tvec',

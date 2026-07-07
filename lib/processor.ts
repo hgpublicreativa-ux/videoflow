@@ -149,8 +149,36 @@ export class VideoProcessor {
           metadata.nombre_archivo
         );
 
-        await this.driveService.renameFile(video.id, sanitizedName);
-        await this.driveService.moveFile(video.id, project.finalFolderId);
+        if (project.musicFolderId) {
+          // Flujo con musica: mezcla cancion aleatoria de fondo, sube video nuevo.
+          const songs = await this.driveService.listAudioInFolder(
+            project.musicFolderId
+          );
+          if (songs.length === 0) {
+            throw new Error('Carpeta de musica vacia o sin audios');
+          }
+          const song = songs[Math.floor(Math.random() * songs.length)];
+          const songPath = path.join(this.tempDir, `${video.id}_song`);
+          const outPath = path.join(this.tempDir, `${video.id}_out.mp4`);
+
+          await this.driveService.downloadFile(song.id, songPath);
+          await this.ffmpegService.mixMusic(videoPath, songPath, outPath, 0.25);
+          await this.driveService.uploadFile(
+            outPath,
+            sanitizedName,
+            project.finalFolderId,
+            'video/mp4'
+          );
+          // Manda el original a la papelera (ya subimos la version con musica).
+          await this.driveService.trashFile(video.id);
+
+          if (fs.existsSync(songPath)) fs.unlinkSync(songPath);
+          if (fs.existsSync(outPath)) fs.unlinkSync(outPath);
+        } else {
+          await this.driveService.renameFile(video.id, sanitizedName);
+          await this.driveService.moveFile(video.id, project.finalFolderId);
+        }
+
         result.videosProcessed++;
         result.videosMoved++;
 

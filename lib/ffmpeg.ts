@@ -40,6 +40,36 @@ export class FFmpegService {
     });
   }
 
+  // Mezcla musica de fondo bajo la voz original. Termina cuando el video termina.
+  async mixMusic(
+    videoPath: string,
+    musicPath: string,
+    outputPath: string,
+    musicVolume = 0.25
+  ): Promise<void> {
+    return new Promise((resolve, reject) => {
+      ffmpeg(videoPath)
+        .input(musicPath)
+        .complexFilter([
+          `[1:a]volume=${musicVolume}[m]`,
+          `[0:a][m]amix=inputs=2:duration=first:dropout_transition=0[a]`,
+        ])
+        .outputOptions([
+          '-map', '0:v',
+          '-map', '[a]',
+          '-c:v', 'copy',
+          '-c:a', 'aac',
+          '-shortest',
+        ])
+        .on('error', (err: Error) => {
+          console.error('FFmpeg mixMusic error:', err);
+          reject(err);
+        })
+        .on('end', () => resolve())
+        .save(outputPath);
+    });
+  }
+
   async getVideoDuration(videoPath: string): Promise<number> {
     return new Promise((resolve, reject) => {
       ffmpeg.ffprobe(videoPath, (err: Error | null, metadata: any) => {
