@@ -1,10 +1,15 @@
 import ffmpeg from 'fluent-ffmpeg';
 import { execSync } from 'child_process';
+import ffmpegStatic from 'ffmpeg-static';
 
 export class FFmpegService {
   constructor() {
-    if (process.env.FFMPEG_PATH) {
-      ffmpeg.setFfmpegPath(process.env.FFMPEG_PATH);
+    // Usa FFMPEG_PATH solo si es path absoluto valido; si no, binario bundled (ffmpeg-static).
+    const envPath = process.env.FFMPEG_PATH;
+    const ffmpegPath =
+      envPath && envPath.startsWith('/') ? envPath : ffmpegStatic;
+    if (ffmpegPath) {
+      ffmpeg.setFfmpegPath(ffmpegPath);
     }
   }
 
