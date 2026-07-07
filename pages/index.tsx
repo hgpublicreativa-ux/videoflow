@@ -57,9 +57,12 @@ export default function Home() {
       const data = await response.json();
       if (data.success) {
         setResults(data.results || []);
+      } else {
+        alert(data.message || 'Error al procesar');
       }
     } catch (error) {
       console.error('Error processing:', error);
+      alert('Error de conexión al procesar');
     } finally {
       setLoading(false);
     }
@@ -76,9 +79,12 @@ export default function Home() {
       const data = await response.json();
       if (data.success) {
         setResults(data.results || []);
+      } else {
+        alert(data.message || 'Error al procesar');
       }
     } catch (error) {
       console.error('Error processing project:', error);
+      alert('Error de conexión al procesar');
     } finally {
       setLoading(false);
     }

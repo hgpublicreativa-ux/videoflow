@@ -10,6 +10,17 @@ export class ConfigLoader {
   }
 
   loadProjects(): Project[] {
+    // Prioridad: env var PROJECTS_JSON (persiste en Railway). Fallback: archivo.
+    const envJson = process.env.PROJECTS_JSON;
+    if (envJson) {
+      try {
+        const projects = JSON.parse(envJson);
+        return Array.isArray(projects) ? projects : [projects];
+      } catch (error) {
+        console.error('Error parsing PROJECTS_JSON env var:', error);
+      }
+    }
+
     try {
       if (!fs.existsSync(this.configPath)) {
         console.warn(`Config file not found at ${this.configPath}`);
